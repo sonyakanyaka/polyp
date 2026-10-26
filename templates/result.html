@@ -1,0 +1,65 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Результат проверки</title>
+    <style>
+        body { font-family: Arial, sans-serif; background: #f5f7fa; padding: 20px; color: #333; }
+        .container { max-width: 600px; margin: 0 auto; background: white; padding: 30px; border-radius: 10px; box-shadow: 0 4px 10px rgba(0,0,0,0.1); }
+        h1, h2 { color: #14426b; }
+        ul { padding-left: 20px; font-size: 18px; }
+        .alert-danger { background: #f8d7da; border-left: 5px solid #dc3545; padding: 15px; border-radius: 5px; margin-bottom: 10px; }
+        .alert-warning { background: #fff3cd; border-left: 5px solid #ffc107; padding: 15px; border-radius: 5px; margin-bottom: 10px; }
+        .btn { display: inline-block; margin-top: 20px; padding: 12px 20px; background: #14426b; color: white; text-decoration: none; border-radius: 8px; font-size: 18px; }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <h1>Результат проверки</h1>
+        
+        <h2>✅ Распознанные препараты</h2>
+        <ul>
+            {% for m in found %}
+            <li>{{ m.name }}</li>
+            {% else %}
+            <li>Ничего не распознано</li>
+            {% endfor %}
+        </ul>
+
+        {% if unknown %}
+        <h2>❓ Не найдены в базе</h2>
+        <p>{{ unknown | join(", ") }}</p>
+        {% endif %}
+
+        {% if beers %}
+        <h2>⚠️ Риски для пожилых (Критерии Бирса)</h2>
+        {% for b in beers %}
+        <div class="alert-warning">
+            <strong>{{ b.med }}</strong> (Категория: {{ b.cat }})<br>
+            <b>Почему:</b> {{ b.why }}<br>
+            <b>Что делать:</b> {{ b.rec }}
+        </div>
+        {% endfor %}
+        {% endif %}
+
+        {% if interactions %}
+        <h2>🔴 Опасные взаимодействия</h2>
+        {% for i in interactions %}
+        <div class="alert-danger">
+            <strong>{{ i.med1 }} + {{ i.med2 }}</strong> (Опасность: {{ i.sev }})<br>
+            {{ i.desc }}
+        </div>
+        {% endfor %}
+        {% endif %}
+
+        {% if not beers and not interactions and found %}
+        <div style="background: #d4edda; padding: 15px; border-radius: 5px; color: #155724;">
+            В нашей базе опасных сочетаний не найдено. Но это не значит, что всё безопасно — обсудите список с врачом.
+        </div>
+        {% endif %}
+
+        <a href="/" class="btn">← Проверить другой список</a>
+    </div>
+</body>
+</html>
